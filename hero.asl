@@ -1,5 +1,5 @@
-//STUDENT NAME: Sheung Bun Larry Lee
-//STUDENT ID: 201952256
+
+
 
 //Hero is at the position of agent P (variable), if agent P's position is identical to Hero's position 
 at(P) :- pos(P,X,Y) & pos(hero,X,Y).
@@ -180,10 +180,22 @@ at(P) :- pos(P,X,Y) & pos(hero,X,Y).
 
 // Recursive case: still moving to resume target while avoiding teleporter coordinate.
 +!goTo_avoid(ResumeX,ResumeY,TeleportX,TeleportY)
-   : not pos(hero,ResumeX,ResumeY)                          // TRUE if hero is not at the resume coordinate.
-   <- !predict_step(ResumeX,ResumeY,PredictedX,PredictedY); // Predict next move_towards step.
+   : not pos(hero,ResumeX,ResumeY)
+   <- !predict_step(ResumeX,ResumeY,PredictedX,PredictedY);   // Predict next move_towards step.
       !step_or_detour(ResumeX,ResumeY,TeleportX,TeleportY,PredictedX,PredictedY); // Choose normal step or detour.
-      !goTo_avoid(ResumeX,ResumeY,TeleportX,TeleportY).      // Continue until target reached.
+      ?pos(hero,PostX,PostY);                                  // Query actual position after the move.
+      !check_reteleport(ResumeX,ResumeY,TeleportX,TeleportY,PredictedX,PredictedY,PostX,PostY). // Verify no re-teleport.
+
+// No re-teleport: predicted matches actual, continue navigating normally.
++!check_reteleport(ResumeX,ResumeY,TeleportX,TeleportY,PredX,PredY,PredX,PredY)
+   <- !goTo_avoid(ResumeX,ResumeY,TeleportX,TeleportY).
+
+// Re-teleport detected: actual position differs from predicted, restart recovery from new position.
++!check_reteleport(ResumeX,ResumeY,TeleportX,TeleportY,PredX,PredY,PostX,PostY)
+   : PredX \== PostX | PredY \== PostY
+   <- .print("Re-teleport detected during recovery!");         // Debug output.
+      !next_of(TeleportX,TeleportY,NewResumeX,NewResumeY);    // Recompute resume slot from teleporter position.
+      !goTo_avoid(NewResumeX,NewResumeY,TeleportX,TeleportY). // Restart avoidance from new actual position.
 
 // Safety stop: resume target already reached, so stop goTo_avoid recursion.
 +!goTo_avoid(ResumeX,ResumeY,TeleportX,TeleportY)
