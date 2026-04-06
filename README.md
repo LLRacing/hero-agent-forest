@@ -6,6 +6,15 @@ A BDI (Belief-Desire-Intention) agent developed in AgentSpeak (JASON) as part of
 
 ---
 
+## Demo
+
+**Full Code Walkthrough & Demonstration (Preset 0–5)**  
+[![Watch on YouTube](https://img.shields.io/badge/Watch%20on-YouTube-red?logo=youtube)](https://youtu.be/BoDcPMg67QQ)
+
+The video covers a full explanation of the agent code followed by live demonstrations across all six environment presets.
+
+---
+
 ## Agent Overview
 
 The Hero agent (`hero.asl`) is written in AgentSpeak and executed via the JASON multi-agent platform. It operates within a forest environment consisting of an 8x8 grid, interacting with percepts and actions exposed by a Java-based environment (`ForestEnv.java`).
